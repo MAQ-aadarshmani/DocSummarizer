@@ -1,0 +1,41 @@
+{
+  "build": {
+    "appId": "CMVF Configurator"
+  },
+  "scripts": {
+    "start": "electron ."
+  },
+  "name": "CMVFConfigurator",
+  "version": "1.0.1",
+  "description": "A minimal Electron application which would help users in configuring Common Validation Framerwork and also allow them to execute the utility",
+  "main": "main.js",
+  "repository": "",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "CMVF",
+  "license": "",
+  "devDependencies": {
+    "electron": "^4.2.12",
+    "electron-builder": "^22.4.1",
+    "electron-packager": "^14.2.1",
+    "electron-rebuild": "^1.10.1",
+    "electron-wix-msi": "^2.2.0"
+  },
+  "dependencies": {
+    "find-process": "^1.4.3",
+    "fs": "0.0.1-security",
+    "node-powershell": "^4.0.0",
+    "node-sql-parser": "^1.7.9",
+    "packager": "^0.1.5",
+    "process-list": "^2.0.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5",
+    "tedious": "^8.0.1",
+    "win-dpapi": "^0.1.0"
+  }
+}
