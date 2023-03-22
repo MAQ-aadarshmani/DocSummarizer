@@ -25,36 +25,54 @@ class App:
         self.file_path_list = []
         self.heading_options = []
 
+        def heading_dropdown_callback(choice):
+            self.subheading_dropdown.configure(state="normal")
+            self.subheading_dropdown.set("Select a subheading")
+            print("combobox dropdown clicked:", choice)
+
         # create select file button
         self.select_file_button = tk.CTkButton(
             self.master, text="Select File", command=self.select_file
         )
-        self.select_file_button.pack(pady=10)
+        self.select_file_button.grid(row=0, column=3)
+
+        # Configure 6 rows and 4 columns
+        for i in range(16):
+            root.rowconfigure(i, weight=1)
+        for i in range(7):
+            root.columnconfigure(i, weight=1)
 
         # create label to show selected file path
         self.file_path_label = tk.CTkLabel(self.master, text="No file selected.")
-        self.file_path_label.pack()
+        self.file_path_label.grid(row=1, column=1, columnspan=5, sticky="ew")
 
-        # create dropdown to select the OpenAI engine
-
+        # Create the first Combobox and place it on the left side
         self.heading_dropdown = tk.CTkComboBox(
             self.master,
             values=self.heading_options,
-            command=self.combobox_callback,
+            command=heading_dropdown_callback,
             state="disabled",
         )
-        # self.heading_dropdown.current(0)
-        self.heading_dropdown.pack(pady=10)
+        self.heading_dropdown.grid(row=2, column=1, columnspan=2, sticky="ew")
+
+        # Create the second Combobox and place it on the right side
+        self.subheading_dropdown = self.subheading_dropdown = tk.CTkComboBox(
+            self.master,
+            values=self.heading_options,
+            state="disabled",
+        )
+        self.heading_dropdown.set("Select a Subheading")
+        self.subheading_dropdown.grid(row=2, column=4, columnspan=2, sticky="ew")
 
         # create button to show file content
         self.show_content_button = tk.CTkButton(
             self.master, text="Show Summary", command=self.show_summary
         )
-        self.show_content_button.pack(pady=10)
+        self.show_content_button.grid(row=3, column=3)
 
         # create text area to show file content
         self.content_text = tk.CTkTextbox(self.master)
-        self.content_text.pack(fill="both", expand=True, padx=10, pady=10)
+        self.content_text.grid(row=4, column=1, columnspan=5, rowspan=8, sticky="nsew")
 
         master.title("File Save")
 
@@ -62,16 +80,13 @@ class App:
         self.pdf_button = tk.CTkButton(
             self.master, text="Save as PDF", command=self.save_as_pdf
         )
-        self.pdf_button.pack(side="left", padx=120)
+        self.pdf_button.grid(row=13, column=1, columnspan=2, sticky="ew")
 
         # Create a button to save output as TXT
         self.txt_button = tk.CTkButton(
             self.master, text="Save as TXT", command=self.save_as_txt
         )
-        self.txt_button.pack(side="right", padx=120)
-
-    def combobox_callback(choice):
-        print("combobox dropdown clicked:", choice)
+        self.txt_button.grid(row=13, column=4, columnspan=2, sticky="ew")
 
     def save_as_pdf(self):
         # Add a page to the PDF object
@@ -118,6 +133,7 @@ class App:
         ext = self.file_path_list[-1]
         if ext == "docx":
             self.heading_dropdown.configure(state="normal")
+            self.heading_dropdown.set("Select a Heading")
             doc = docx.Document(self.file_path)
             # print(doc)
             for para in doc.paragraphs:
