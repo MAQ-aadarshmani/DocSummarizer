@@ -50,14 +50,8 @@ for para in doc.paragraphs:
         inside_heading_1 = True
     # check if the paragraph is not a Heading 1 and we are currently inside a Heading 1 section
     elif inside_heading_1:
-        # check if the paragraph has no style or is bold
-        if (not para.style.name.startswith('Heading 1')):
-            # add the text of the paragraph to the string if it is not None
-            if para.text is not None:
-                heading_text += para.text + '\n'
-        # if the paragraph has a style starting with "Heading", we are no longer inside a Heading 1 section
-        elif para.style.name.startswith('Heading 1'):
-            inside_heading_1 = False
+        if para.text is not None:
+            heading_text += para.text + '\n'
 
 # print the content between the Heading 1 sections
 print(heading_text)
