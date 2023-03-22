@@ -24,11 +24,48 @@ class App:
         self.summary = ""
         self.file_path_list = []
         self.heading_options = []
+        self.desired_content = ''
+        self.ext = ''
 
         def heading_dropdown_callback(choice):
             self.subheading_dropdown.configure(state="normal")
             self.subheading_dropdown.set("Select a subheading")
-            print("combobox dropdown clicked:", choice)
+
+            # Subheading values
+            self.subheading_dropdown.configure(values=subheading_dropdown_values(choice))
+
+            # print("combobox dropdown clicked:", choice)
+            doc = docx.Document(self.file_path)
+            inside_heading_1 = False
+            # loop through all the paragraphs in the document
+            for para in doc.paragraphs:
+                # check if the paragraph is a Heading 1
+                if para.style.name.startswith('Heading 1') and inside_heading_1:
+                    break
+                if para.style.name.startswith('Heading 1') and para.text == choice:
+                    self.desired_content += para.text + '\n'
+                    inside_heading_1 = True
+                # check if the paragraph is not a Heading 1 and we are currently inside a Heading 1 section
+                elif inside_heading_1:
+                    if para.text is not None:
+                        self.desired_content += para.text + '\n'
+            # print(self.desired_content)
+            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any."
+
+        def subheading_dropdown_values(choice):
+            doc = docx.Document(self.file_path)
+            # print(doc)
+            sub_list = []
+            inside_haeding1 = False
+            for para in doc.paragraphs:
+                if para.style.name == "Heading 1" and para.text == choice:
+                    inside_haeding1 = True
+                elif para.style.name == "Heading 2" and inside_haeding1:
+                    sub_list.append(para.text)
+                elif para.style.name == "Heading 1" and inside_haeding1:
+                    break
+            return sub_list
+
 
         # create select file button
         self.select_file_button = tk.CTkButton(
@@ -130,16 +167,17 @@ class App:
         self.file_path = filedialog.askopenfilename()
         self.file_path_label.configure(text=self.file_path)
         self.file_path_list = self.file_path.split(".")
-        ext = self.file_path_list[-1]
-        if ext == "docx":
+        self.ext = self.file_path_list[-1]
+        if self.ext == "docx":
             self.heading_dropdown.configure(state="normal")
             self.heading_dropdown.set("Select a Heading")
             doc = docx.Document(self.file_path)
+            # print(doc)
             for para in doc.paragraphs:
                 if para.style.name == "Heading 1":
                     self.heading_options.append(para.text)
             self.heading_dropdown.configure(values=self.heading_options)
-        elif ext == "pdf":
+        elif self.ext == "pdf":
             pass
         else:
             pass
@@ -147,16 +185,16 @@ class App:
     # API Call and summary texbox
     def show_summary(self):
         if self.file_path:
-            contents = ""
-            with open(self.file_path, "r") as file:
-                contents = file.read()
 
-            contents += "\n Summarize it."
+            if self.ext != "docx":
+                with open(self.file_path, "r") as file:
+                   self.desired_content = file.read()
+                self.desired_content += "\n Summarize it."
 
             try:
                 openai.api_key = API_KEY
                 completion = openai.Completion.create(
-                    engine="text-davinci-003", prompt=contents, max_tokens=200
+                    engine="text-davinci-003", prompt=self.desired_content, max_tokens=200
                 )
                 # print(completion)
                 self.summary = completion.choices[0]["text"].strip()
