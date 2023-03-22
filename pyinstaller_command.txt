@@ -1,0 +1,1 @@
+pyinstaller --noconfirm --onedir --windowed --add-data "C:/Users/maq/anaconda3/envs/basedonchatgpt/lib/site-packages/customtkinter;customtkinter/"  "C:/Users/MAQ/OneDrive - MAQ Software/Desktop/basedonchatgpt"
