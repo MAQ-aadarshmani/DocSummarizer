@@ -119,6 +119,7 @@ class App:
         if ext == "docx":
             self.heading_dropdown.configure(state="normal")
             doc = docx.Document(self.file_path)
+            # print(doc)
             for para in doc.paragraphs:
                 if para.style.name == "Heading 1":
                     self.heading_options.append(para.text)
