@@ -142,7 +142,7 @@ class App:
         self.content_text = tk.CTkTextbox(self.master)
         self.content_text.grid(row=4, column=1, columnspan=5, rowspan=8, sticky="nsew")
 
-        master.title("File Save")
+        master.title("DocSummarizer")
 
         # Create a button to save output as PDF
         self.pdf_button = tk.CTkButton(
@@ -192,7 +192,7 @@ class App:
         # Save the PDF file to the downloads folder
         pdf_file = os.path.join(os.path.expanduser("~"), "Downloads", "output.pdf")
         pdf.output(pdf_file)
-        messagebox.showinfo("Success", "Successfully saved in "+pdf_file)
+        messagebox.showinfo("Success", "Successfully saved in " + pdf_file)
 
     # helper function for pdf creator
     def multiline_it(self, str1):
@@ -226,7 +226,7 @@ class App:
                 + "\n\n"
                 + self.summary
             )
-        messagebox.showinfo("Success", "Successfully saved in "+txt_file)
+        messagebox.showinfo("Success", "Successfully saved in " + txt_file)
 
     # File selection dialog
     def select_file(self):
