@@ -26,8 +26,10 @@ class App:
         self.heading_options = []
         self.desired_content = ''
         self.ext = ''
+        self.selected_heading = ''
 
         def heading_dropdown_callback(choice):
+            self.selected_heading = choice
             self.subheading_dropdown.configure(state="normal")
             self.subheading_dropdown.set("Select a subheading")
 
@@ -50,7 +52,30 @@ class App:
                     if para.text is not None:
                         self.desired_content += para.text + '\n'
             # print(self.desired_content)
-            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any."
+            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
+
+        def subheading_dropdown_callback(choice):
+            doc = docx.Document(self.file_path)
+            inside_heading_1 = False
+            inside_subheading_1 = False
+            self.desired_content = ''
+            # loop through all the paragraphs in the document
+            for para in doc.paragraphs:
+                if para.style.name.startswith('Heading 2') and inside_subheading_1:
+                    break
+                # check if the paragraph is a Heading 1
+                if para.style.name == "Heading 1" and para.text == self.selected_heading:
+                    inside_heading_1 = True
+                if para.style.name.startswith('Heading 2') and para.text == choice and inside_heading_1:
+                    self.desired_content += para.text + '\n'
+                    inside_subheading_1 = True
+                # check if the paragraph is not a Heading 1 and we are currently inside a Heading 1 section
+                elif inside_heading_1 and inside_subheading_1:
+                    if para.text is not None:
+                        self.desired_content += para.text + '\n'
+            print(self.desired_content)
+            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
+
 
         def subheading_dropdown_values(choice):
             doc = docx.Document(self.file_path)
@@ -96,6 +121,7 @@ class App:
         self.subheading_dropdown = self.subheading_dropdown = tk.CTkComboBox(
             self.master,
             values=self.heading_options,
+            command=subheading_dropdown_callback,
             state="disabled",
         )
         self.heading_dropdown.set("Select a Subheading")
@@ -194,7 +220,7 @@ class App:
             try:
                 openai.api_key = API_KEY
                 completion = openai.Completion.create(
-                    engine="text-davinci-003", prompt=self.desired_content, max_tokens=200
+                    engine="text-davinci-003", prompt=self.desired_content, max_tokens=300
                 )
                 # print(completion)
                 self.summary = completion.choices[0]["text"].strip()
