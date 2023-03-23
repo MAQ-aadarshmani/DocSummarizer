@@ -1,3 +1,7 @@
+<a name="readme-top"></a>
+
+
+
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
@@ -18,14 +22,18 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/MAQ-aadarshmani/basedonchatgpt">
+  <a href="https://github.com/MAQ-aadarshmani/DocSummarizer">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">DocSummarizer</h3>
 
   <p align="center">
-    project_description
+    DocSummarizer is a powerful tool that uses the cutting-edge ChatGPT API to automatically generate summaries of documents with incredible accuracy and speed.  Whether you're a student, researcher, or professional, this tool can help you save time and effort by providing you with concise summaries of lengthy documents.
+
+Using state-of-the-art natural language processing techniques, DocSummarizer can quickly analyze the contents of any document and distill its key points into a summary that captures the essence of the original text. With just a few clicks, you can generate summaries that are highly readable and informative, making it easier than ever to digest complex information and stay up-to-date with the latest developments in your field.
+
+Whether you're a busy professional or a student looking to stay on top of your coursework, DocSummarizer is the perfect tool for anyone looking to streamline their workflow and improve their productivity. Try it out today and experience the power of ChatGPT-powered document summarization for yourself!
     <br />
     <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
     <br />
@@ -233,4 +241,3 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
-
