@@ -52,7 +52,7 @@ class App:
                     if para.text is not None:
                         self.desired_content += para.text + '\n'
             # print(self.desired_content)
-            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any."
+            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
 
         def subheading_dropdown_callback(choice):
             doc = docx.Document(self.file_path)
@@ -74,7 +74,7 @@ class App:
                     if para.text is not None:
                         self.desired_content += para.text + '\n'
             print(self.desired_content)
-            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any."
+            self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
 
 
         def subheading_dropdown_values(choice):
@@ -220,7 +220,7 @@ class App:
             try:
                 openai.api_key = API_KEY
                 completion = openai.Completion.create(
-                    engine="text-davinci-003", prompt=self.desired_content, max_tokens=200
+                    engine="text-davinci-003", prompt=self.desired_content, max_tokens=300
                 )
                 # print(completion)
                 self.summary = completion.choices[0]["text"].strip()
