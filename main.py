@@ -8,11 +8,17 @@ import os
 import docx
 from fpdf import FPDF
 
-pdf = FPDF(
-    "P",
-    "mm",
-    "A4",
-)
+
+# class PDF(FPDF):
+#     def header(self):
+#         self.set_font("OpenSans", "B", 20)
+#         self.cell(0, 10, "Generated Summary", border=False, ln=1, align="C")
+#         self.ln(10)
+
+
+pdf = FPDF("P", "mm", "A4")
+pdf.add_font("OpenSans", "", os.getcwd() + r"\OpenSans-LightItalic.ttf")
+pdf.add_font("OpenSans", "B", os.getcwd() + r"\OpenSans-SemiBoldItalic.ttf")
 tk.set_appearance_mode("dark")
 tk.set_default_color_theme("dark-blue")
 
@@ -24,9 +30,10 @@ class App:
         self.summary = ""
         self.file_path_list = []
         self.heading_options = []
-        self.desired_content = ''
-        self.ext = ''
-        self.selected_heading = ''
+        self.desired_content = ""
+        self.ext = ""
+        self.selected_heading = ""
+        self.selected_subheading = ""
 
         def heading_dropdown_callback(choice):
             self.selected_heading = choice
@@ -34,7 +41,9 @@ class App:
             self.subheading_dropdown.set("Select a subheading")
 
             # Subheading values
-            self.subheading_dropdown.configure(values=subheading_dropdown_values(choice))
+            self.subheading_dropdown.configure(
+                values=subheading_dropdown_values(choice)
+            )
 
             # print("combobox dropdown clicked:", choice)
             doc = docx.Document(self.file_path)
@@ -42,55 +51,61 @@ class App:
             # loop through all the paragraphs in the document
             for para in doc.paragraphs:
                 # check if the paragraph is a Heading 1
-                if para.style.name.startswith('Heading 1') and inside_heading_1:
+                if para.style.name.startswith("Heading 1") and inside_heading_1:
                     break
-                if para.style.name.startswith('Heading 1') and para.text == choice:
-                    self.desired_content += para.text + '\n'
+                if para.style.name.startswith("Heading 1") and para.text == choice:
+                    self.desired_content += para.text + "\n"
                     inside_heading_1 = True
                 # check if the paragraph is not a Heading 1 and we are currently inside a Heading 1 section
                 elif inside_heading_1:
                     if para.text is not None:
-                        self.desired_content += para.text + '\n'
+                        self.desired_content += para.text + "\n"
             # print(self.desired_content)
             self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
 
         def subheading_dropdown_callback(choice):
+            self.selected_subheading = choice
             doc = docx.Document(self.file_path)
             inside_heading_1 = False
             inside_subheading_1 = False
-            self.desired_content = ''
+            self.desired_content = ""
             # loop through all the paragraphs in the document
             for para in doc.paragraphs:
-                if para.style.name.startswith('Heading 2') and inside_subheading_1:
+                if para.style.name.startswith("Heading 2") and inside_subheading_1:
                     break
                 # check if the paragraph is a Heading 1
-                if para.style.name == "Heading 1" and para.text == self.selected_heading:
+                if (
+                    para.style.name == "Heading 1"
+                    and para.text == self.selected_heading
+                ):
                     inside_heading_1 = True
-                if para.style.name.startswith('Heading 2') and para.text == choice and inside_heading_1:
-                    self.desired_content += para.text + '\n'
+                if (
+                    para.style.name.startswith("Heading 2")
+                    and para.text == choice
+                    and inside_heading_1
+                ):
+                    self.desired_content += para.text + "\n"
                     inside_subheading_1 = True
                 # check if the paragraph is not a Heading 1 and we are currently inside a Heading 1 section
                 elif inside_heading_1 and inside_subheading_1:
                     if para.text is not None:
-                        self.desired_content += para.text + '\n'
+                        self.desired_content += para.text + "\n"
             print(self.desired_content)
             self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
-
 
         def subheading_dropdown_values(choice):
             doc = docx.Document(self.file_path)
             # print(doc)
             sub_list = []
-            inside_haeding1 = False
+            inside_heading1 = False
             for para in doc.paragraphs:
                 if para.style.name == "Heading 1" and para.text == choice:
-                    inside_haeding1 = True
-                elif para.style.name == "Heading 2" and inside_haeding1:
+                    inside_heading1 = True
+                elif para.style.name == "Heading 2" and inside_heading1:
                     sub_list.append(para.text)
-                elif para.style.name == "Heading 1" and inside_haeding1:
+                elif para.style.name == "Heading 1" and inside_heading1:
                     break
             return sub_list
-
 
         # create select file button
         self.select_file_button = tk.CTkButton(
@@ -154,9 +169,31 @@ class App:
     def save_as_pdf(self):
         # Add a page to the PDF object
         pdf.add_page()
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("OpenSans", "B", 12)
+        pdf.cell(
+            0,
+            10,
+            "Generated Summary",
+            border=False,
+            ln=1,
+            align="C",
+        )
+        pdf.cell(
+            0,
+            10,
+            "for Heading: "
+            + self.selected_heading
+            + " and Subheading: "
+            + self.selected_subheading,
+            border=False,
+            ln=1,
+            align="C",
+        )
+
+        pdf.ln(10)
+        pdf.set_font("OpenSans", "", size=12)
+        pdf.set_fill_color(255, 220, 220)
         text = self.multiline_it(self.summary)
-        print(text)
 
         # Set the cell width and write the text to the cell
         for i in text:
@@ -167,26 +204,37 @@ class App:
         pdf.output(pdf_file)
 
     # helper function for pdf creator
-    def multiline_it(self, stri):
-        stri = stri.split()
+    def multiline_it(self, str1):
+        str1 = str1.split("\n")
         result = [""]
         chars = 80
-        c = 0
-        for i in stri:
-            c += len(i)
-            if c > chars:
-                result[-1] += i
-                result.append("")
-                c = 0
-            else:
-                result[-1] += i + " "
+        for i in str1:
+            str2 = i.split(" ")
+            c = 0
+            for j in str2:
+                c += len(j)
+                if c > chars:
+                    result[-1] += j
+                    result.append("")
+                    c = 0
+                else:
+                    result[-1] += j + " "
+            result.append("")
         return result
 
     # Save the text file to the downloads folder
     def save_as_txt(self):
         txt_file = os.path.join(os.path.expanduser("~"), "Downloads", "output.txt")
         with open(txt_file, "w") as f:
-            f.write(self.summary)
+            f.write(
+                "Generated Summary for "
+                + "Heading: "
+                + self.selected_heading
+                + " and Subheading: "
+                + self.selected_subheading
+                + "\n\n"
+                + self.summary
+            )
 
     # File selection dialog
     def select_file(self):
@@ -214,13 +262,15 @@ class App:
 
             if self.ext != "docx":
                 with open(self.file_path, "r") as file:
-                   self.desired_content = file.read()
+                    self.desired_content = file.read()
                 self.desired_content += "\n Summarize it."
 
             try:
                 openai.api_key = API_KEY
                 completion = openai.Completion.create(
-                    engine="text-davinci-003", prompt=self.desired_content, max_tokens=300
+                    engine="text-davinci-003",
+                    prompt=self.desired_content,
+                    max_tokens=300,
                 )
                 # print(completion)
                 self.summary = completion.choices[0]["text"].strip()
