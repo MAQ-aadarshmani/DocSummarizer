@@ -8,14 +8,6 @@ import os
 import docx
 from fpdf import FPDF
 
-
-# class PDF(FPDF):
-#     def header(self):
-#         self.set_font("OpenSans", "B", 20)
-#         self.cell(0, 10, "Generated Summary", border=False, ln=1, align="C")
-#         self.ln(10)
-
-
 pdf = FPDF("P", "mm", "A4")
 pdf.add_font("OpenSans", "", os.getcwd() + r"\OpenSans-LightItalic.ttf")
 pdf.add_font("OpenSans", "B", os.getcwd() + r"\OpenSans-SemiBoldItalic.ttf")
@@ -60,7 +52,6 @@ class App:
                 elif inside_heading_1:
                     if para.text is not None:
                         self.desired_content += para.text + "\n"
-            # print(self.desired_content)
             self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
 
         def subheading_dropdown_callback(choice):
@@ -90,7 +81,6 @@ class App:
                 elif inside_heading_1 and inside_subheading_1:
                     if para.text is not None:
                         self.desired_content += para.text + "\n"
-            print(self.desired_content)
             self.desired_content += "\n Summarize it and list out important dimensions, KPI's and metric definitions if any in short."
 
         def subheading_dropdown_values(choice):
@@ -202,6 +192,7 @@ class App:
         # Save the PDF file to the downloads folder
         pdf_file = os.path.join(os.path.expanduser("~"), "Downloads", "output.pdf")
         pdf.output(pdf_file)
+        messagebox.showinfo("Success", "Successfully saved in "+pdf_file)
 
     # helper function for pdf creator
     def multiline_it(self, str1):
@@ -235,6 +226,7 @@ class App:
                 + "\n\n"
                 + self.summary
             )
+        messagebox.showinfo("Success", "Successfully saved in "+txt_file)
 
     # File selection dialog
     def select_file(self):
@@ -246,7 +238,6 @@ class App:
             self.heading_dropdown.configure(state="normal")
             self.heading_dropdown.set("Select a Heading")
             doc = docx.Document(self.file_path)
-            # print(doc)
             for para in doc.paragraphs:
                 if para.style.name == "Heading 1":
                     self.heading_options.append(para.text)
@@ -272,10 +263,7 @@ class App:
                     prompt=self.desired_content,
                     max_tokens=300,
                 )
-                # print(completion)
                 self.summary = completion.choices[0]["text"].strip()
-
-                print("\nSummary of the file content :\n" + self.summary + "\n")
                 self.content_text.delete("1.0", tk.END)
                 self.content_text.insert(tk.END, self.summary)
 
